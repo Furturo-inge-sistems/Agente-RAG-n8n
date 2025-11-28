@@ -1,0 +1,456 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1264,
+        -320
+      ],
+      "id": "314da60b-1cde-4e2a-8cbf-c69eb9ee1f7b",
+      "name": "Telegram Trigger",
+      "webhookId": "31e5ca75-2124-4031-b20e-f957e7a83089",
+      "credentials": {
+        "telegramApi": {
+          "id": "IV9WgizKjHx0v3sJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -208
+      ],
+      "id": "956082ab-d8a0-4e83-a598-43b57ddbac2d",
+      "name": "Send a text message",
+      "webhookId": "36d390c6-5a66-448f-8ec3-05d0c8b8532d",
+      "credentials": {
+        "telegramApi": {
+          "id": "IV9WgizKjHx0v3sJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "Project",
+          "mode": "list",
+          "cachedResultName": "Project"
+        },
+        "embeddingBatchSize": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        -944,
+        -512
+      ],
+      "id": "2457b847-9f43-4a34-a86d-c25d9dec1c13",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "CABgp3Y6y05Ex52J",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        -368
+      ],
+      "id": "aea42ff4-df0a-4b8c-9691-ba8ead36cd6f",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "qudRb6RWPIygdBTs",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "messages",
+        "contextWindowLength": 4
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -848,
+        -48
+      ],
+      "id": "292486a0-6aea-4355-b8c1-3cc18c376f4d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -48
+      ],
+      "id": "293dcd01-1988-4140-a5e2-13c24787a952",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "qudRb6RWPIygdBTs",
+          "name": "Ollama account"
+        }
+      },
+      "notes": "Eres Aldred, un asistente de IA amigable, servicial y obediente. Tu rol principal es atender todas las dudas y consultas del usuario.\n\n**REGLAS Y PERSONALIDAD:**\n1.  **Tono:** Mantén siempre un tono amigable, positivo y profesional.\n2.  **Archivos:** Si el usuario intenta hacer una pregunta sobre un archivo, documento o PDF sin haberlo subido primero, recuérdale amablemente que debe cargar el archivo para que puedas proceder con el análisis.\n3.  **Comportamiento de Agente:** Analiza las peticiones del usuario y utiliza las herramientas disponibles (como el Answer Tool) cuando sea necesario para encontrar la mejor respuesta.\n\n**FORMATO DE SALIDA (ESTRICTAMENTE PROHIBIDO ROMPER ESTA REGLA):**\n\nLa respuesta final que arrojes, ya sea una respuesta conversacional, una instrucción al usuario o una consulta para una herramienta, DEBE SER GENERADA ESTRICTAMENTE COMO UNA ÚNICA CADENA DE TEXTO PLANO (string).\n\n**ELIMINACIÓN DE INTRODUCCIONES:**\nCuando generes la respuesta final después de haber utilizado una herramienta (como el Answer Tool), **NO DEBES añadir frases introductorias** como \"La respuesta es:\", \"El resultado de la búsqueda es:\", o cualquier otra frase de enmarcación. Simplemente devuelve el texto de la respuesta directamente.\n\n**ESTÁ TERMINANTEMENTE PROHIBIDO** utilizar cualquier tipo de formato estructurado, incluyendo JSON, listas, encabezados o cualquier sintaxis Markdown. Tu salida será **solo el texto plano** necesario."
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "Project",
+          "mode": "list",
+          "cachedResultName": "Project"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        -688,
+        112
+      ],
+      "id": "b8095a38-e0ad-4d6b-a80c-06803feb249c",
+      "name": "Qdrant Vector Store1",
+      "credentials": {
+        "qdrantApi": {
+          "id": "CABgp3Y6y05Ex52J",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        112
+      ],
+      "id": "3f85fdca-ee71-4393-bd24-a6ff767fcf40",
+      "name": "Embeddings Ollama1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "qudRb6RWPIygdBTs",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topK": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', ``, 'number') }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        -16
+      ],
+      "id": "0b44948a-407e-4846-94aa-102f21bd6f77",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        112
+      ],
+      "id": "4a17811d-03ab-4cc7-8388-dbf8528c41df",
+      "name": "Ollama Chat Model2",
+      "credentials": {
+        "ollamaApi": {
+          "id": "qudRb6RWPIygdBTs",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        -208
+      ],
+      "id": "e074b104-5f2b-4180-b80e-7520e83254e8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6f07ec3c-8ac1-4ebe-9ddd-6dacfbe8d946",
+              "leftValue": "={{ $json.message.document }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1136,
+        -320
+      ],
+      "id": "16dd7b65-48a9-45f9-9814-c2368913582b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        -992,
+        -208
+      ],
+      "id": "afa09c0a-416a-44be-ae5d-bd9f56c236f3",
+      "name": "Chat Memory Manager"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "binaryMode": "specificField",
+        "loader": "pdfLoader",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -832,
+        -368
+      ],
+      "id": "4aed900e-a4cd-4962-8cc2-da2df4840db2",
+      "name": "PDF Loader"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_tool": [
+        []
+      ],
+      "main": [
+        []
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Chat Memory Manager",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chat Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory Manager": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5c9a3cd5-d009-4155-aa2c-965c82909c3b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3ebfc673bfb930e488f044916ad9898eff6c5ede20a390d37f6dbddb7e39519e"
+  },
+  "id": "OlIyGEtC319Z2mvu",
+  "tags": []
+}

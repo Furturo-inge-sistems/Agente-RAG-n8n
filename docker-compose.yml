@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Servicio 1: Qdrant (Base de Datos Vectorial)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - rag-network
+
+  # Servicio 2: Ollama (Servidor de Modelos LLM)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Mapeamos la carpeta de datos del contenedor
+      - "./ollama-data:/root/.ollama" 
+    restart: unless-stopped
+    networks:
+      - rag-network
+
+  # Servicio 3: n8n (Orquestador de Flujos)
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    ports:
+      - "5678:5678" # Puerto de la interfaz web de n8n (Acceso local: http://localhost:5678)
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      # --- CAMBIOS AÑADIDOS PARA EL WEBHOOK/HTTPS ---
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      # 1. Indicamos a n8n que use HTTPS (aunque sea a través de ngrok)
+      - N8N_PROTOCOL=https
+      # 2. Variable crucial: URL que n8n debe usar para crear el webhook en Telegram
+      #    DEBES REEMPLAZAR ESTO con la URL HTTPS que te dé ngrok (o tu dominio si usas proxy)
+      - WEBHOOK_URL=https://hazy-overgrossly-leandra.ngrok-free.dev
+      # 3. Permite que n8n confíe en el encabezado X-Forwarded-For de un proxy/ngrok
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_SECURE_COOKIE=false
+      # ----------------------------------------------
+    networks:
+      - rag-network
+    restart: always
+
+# Configuración de los volúmenes para persistir datos
+volumes:
+  qdrant_storage:
+  n8n_data:
+  # El volumen 'ollama_data' se eliminó de aquí ya que usa una ruta de host (./ollama-data)
+  # en su lugar.
+
+# Red interna compartida
+networks:
+  rag-network:
+    driver: bridge

@@ -1,0 +1,77 @@
+# ===========================
+# Comandos de Cloudflare Tunnel
+# ===========================
+
+# Levantar túnel rápido (temporal) para exponer localhost:5678
+cloudflared tunnel --url http://localhost:5678
+
+# Ver logs del túnel en tiempo real
+cloudflared tunnel logs
+
+# (Opcional) Ver túneles activos si usan configuración avanzada
+cloudflared tunnel list
+
+# ===========================
+# Comandos básicos de Docker para n8n
+# ===========================
+
+# Levantar contenedores definidos en docker-compose
+docker compose up -d
+
+# Ver estado de contenedores
+docker compose ps
+
+# Detener contenedores sin borrar volúmenes
+docker compose down
+
+# Reiniciar contenedores (útil después de cambios en variables de entorno)
+docker compose restart
+
+# Ver logs de n8n en tiempo real
+docker compose logs -f n8n
+
+# ===========================
+# Comandos avanzados de Docker
+# ===========================
+
+# Ver contenedores en ejecución
+docker ps
+
+# Ver todos los contenedores (ejecutando y detenidos)
+docker ps -a
+
+# Detener un contenedor específico
+docker stop <NOMBRE_O_ID_DEL_CONTENEDOR>
+
+# Eliminar un contenedor específico
+docker rm <NOMBRE_O_ID_DEL_CONTENEDOR>
+
+# Eliminar todos los contenedores detenidos
+docker container prune
+
+# Eliminar todas las imágenes no usadas
+docker image prune -a
+
+# Ejecutar un comando dentro de un contenedor (debugging o migraciones)
+docker exec -it <NOMBRE_O_ID_DEL_CONTENEDOR> bash
+
+# Ver estadísticas en tiempo real de contenedores
+docker stats
+
+# Inspeccionar variables de entorno de un contenedor
+docker inspect <NOMBRE_O_ID_DEL_CONTENEDOR> | grep -i env -A 10
+
+# Ver logs de todos los contenedores de docker-compose
+docker compose logs -f
+
+# Reconstruir contenedores después de cambios en Dockerfile o variables de entorno
+docker compose up -d --build
+
+# Forzar eliminación de contenedores, volúmenes y redes
+docker compose down -v --rmi all --remove-orphans
+
+# Volver a levantar un contenedor específico
+docker compose up -d <SERVICIO>
+
+# Ejecutar un comando dentro de n8n (por ejemplo migraciones o limpieza)
+docker compose exec n8n <COMANDO>
